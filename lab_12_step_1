@@ -1,0 +1,46 @@
+using System;
+using System.Timers;
+
+public class AlarmClock
+{
+    public delegate void AlarmEventHandler();
+    public event AlarmEventHandler raiseAlarm;
+
+    private string targetTime;
+
+    public void Start()
+    {
+        Console.Write("Enter time in HH:MM:SS format: ");
+        targetTime = Console.ReadLine();
+
+        Timer timer = new Timer(1000);
+        timer.Elapsed += CheckTime;
+        timer.Start();
+        Console.ReadLine();
+    }
+
+    private void CheckTime(object sender, ElapsedEventArgs e)
+    {
+        string currentTime = DateTime.Now.ToString("HH:mm:ss");
+        if (currentTime == targetTime)
+        {
+            raiseAlarm?.Invoke();
+            ((Timer)sender).Stop();
+        }
+    }
+
+    public void Ring_alarm()
+    {
+        Console.WriteLine("⏰ Alarm Triggered! Time matched.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        AlarmClock alarm = new AlarmClock();
+        alarm.raiseAlarm += alarm.Ring_alarm;
+        alarm.Start();
+    }
+}
